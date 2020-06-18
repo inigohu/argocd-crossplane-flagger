@@ -1,0 +1,46 @@
+---
+apiVersion: container.gcp.crossplane.io/v1beta1
+kind: GKECluster
+metadata:
+  name: example-gke
+  labels:
+    provider: gcp
+  annotations:
+    crossplane.io/external-name: example-gke
+spec:
+  forProvider:
+    addonsConfig:
+      istioConfig:
+        auth: "AUTH_NONE"
+        disabled: false
+    location: us-central1 # indicates regional cluster
+    networkRef:
+      name: example-gke
+    subnetworkRef:
+      name: example-gke
+    ipAllocationPolicy:
+      useIpAliases: true
+      clusterSecondaryRangeName: pods
+      servicesSecondaryRangeName: services
+  writeConnectionSecretToRef:
+    namespace: crossplane-system
+    name: example-gke
+  providerRef:
+    name: gcp-provider
+  reclaimPolicy: Delete
+---
+apiVersion: container.gcp.crossplane.io/v1alpha1
+kind: NodePool
+metadata:
+  name: example-gke
+  labels:
+    provider: gcp
+  annotations:
+    crossplane.io/external-name: example-gke
+spec:
+  forProvider:
+    clusterSelector:
+      matchControllerRef: true
+    initialNodeCount: 1
+  providerRef:
+    name: gcp-provider
