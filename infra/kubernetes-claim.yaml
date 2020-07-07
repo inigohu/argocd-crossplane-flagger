@@ -9,10 +9,6 @@ metadata:
     crossplane.io/external-name: example-gke
 spec:
   forProvider:
-    addonsConfig:
-      istioConfig:
-        auth: "AUTH_NONE"
-        disabled: false
     location: us-central1 # indicates regional cluster
     networkRef:
       name: example-gke
